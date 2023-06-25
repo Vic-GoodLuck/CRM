@@ -12,4 +12,5 @@ public interface OrdersService extends IService<orders> {
     RespPageBean getOrdersList(int currentPage, int size);
     RespPageBean getOrdersListBy(int currentPage, int size,int ordersState,String clientCode);
     List<orders> selectByClientCode(String clientCode);
+    List<orders> selectByClientCodeAndState(String clientCode_,int ordersState_);
 }

@@ -12,34 +12,34 @@
       <div style="display: flex">
         <div style="padding: 10px 0;">
           <el-input class="ml-5" suffix-icon="el-icon-search" placeholder="请输入客户名" style="width: 160px;margin:5px;"
-            v-model="clientName_select"></el-input>
-          <!-- <el-input class="ml-5" suffix-icon="el-icon-search" placeholder="请输入客户所在地区" style="width: 200px;margin:5px;" v-model="clientAreaId_select"></el-input>
-          <el-input class="ml-5" suffix-icon="el-icon-search" placeholder="请输入客户等级" style="width: 200px;margin:5px;" v-model="clientLevelId_select"></el-input>
-          <el-input class="ml-5" suffix-icon="el-icon-search" placeholder="请输入客户信用度" style="width: 200px;margin:5px;" v-model="clientCredit_select"></el-input>
-          <el-input class="ml-5" suffix-icon="el-icon-search" placeholder="请输入负责经理id" style="width: 200px;margin:5px;" v-model="clientCustId_select"></el-input> -->
-          <el-select v-model="clientAreaId_select" filterable placeholder="请选择客户所在地区" style="width: 150px;margin:5px;">
+            v-model="clientInfoQuery.clientName"></el-input>
+          <el-select v-model="clientInfoQuery.clientAreaId" multiple filterable placeholder="请选择客户所在地区"
+            style="width: 150px;margin:5px;">
             <el-option v-for="item in area_options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
 
-          <el-select v-model="clientLevelId_select" filterable placeholder="请选择客户等级" style="width: 150px;margin:5px;">
+          <el-select v-model="clientInfoQuery.clientLevelId" multiple filterable placeholder="请选择客户等级"
+            style="width: 150px;margin:5px;">
             <el-option v-for="item in level_options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
 
 
-          <el-select v-model="clientContentment_select" filterable placeholder="请选择客户满意度"
+          <el-select v-model="clientInfoQuery.clientContentment" multiple filterable placeholder="请选择客户满意度"
             style="width: 160px;margin:5px;">
             <el-option v-for="item in Contentment_options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
 
-          <el-select v-model="clientCredit_select" filterable placeholder="请选择客户信用度" style="width: 160px;margin:5px;">
+          <el-select v-model="clientInfoQuery.clientCredit" multiple filterable placeholder="请选择客户信用度"
+            style="width: 160px;margin:5px;">
             <el-option v-for="item in credit_options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
 
-          <el-select v-model="clientCustId_select" filterable placeholder="请选择负责经理" style="width: 150px;margin:5px;">
+          <el-select v-model="clientInfoQuery.clientCustId" multiple filterable placeholder="请选择负责经理"
+            style="width: 150px;margin:5px;">
             <el-option v-for="item in cust_options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -52,7 +52,8 @@
         </div>
       </div>
       <div style="display: flex">
-        <el-select v-model="clientState_select" filterable placeholder="请选择客户状态" style="width: 160px;margin:5px;">
+        <el-select v-model="clientInfoQuery.clientState" multiple filterable placeholder="请选择客户状态"
+          style="width: 160px;margin:5px;">
           <el-option v-for="item in state_options" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
@@ -278,6 +279,28 @@
             <!------------------------------- tab3 查看历史订单部分 -------------------------------------------------------------------->
             <el-tab-pane label="查看历史订单" name="tab3">
               <el-card class="box-card" shadow="hover">
+                <el-row>
+                  <el-col :span="12">
+                    <h4>
+                      <span style="color: black">已回款总金额：</span>
+                      <span :style="{ color: 'green', marginRight: '20px' }">{{ hasGetOrdersTotal }}</span>
+                      <span style="color: black">未回款总金额：</span>
+                      <span :style="{ color: 'red' }">{{ notGetOrdersTotal }}</span>
+                    </h4>
+                  </el-col>
+                  <el-col :span="12">
+                    <div style="margin-left:46px">
+                      <el-select v-model="showOrdersWithState" placeholder="请选择订单状态" label-width="100px"
+                        style="margin-top: 10px;">
+                        <el-option v-for="item in orders_options" :key="item.value" :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
+                      <span></span>
+                      <el-button type="primary" @click="getOrdersByState" size="small" style="margin-left: 16px;">查看</el-button>
+                    </div>
+                  </el-col>
+                </el-row>
                 <!--历史订单表格-->
                 <el-table :data="tableData3" border :row-style="{ height: '40px' }" :cell-style="{ padding: '0px' }"
                   max-height="1000" style="width: 100%" @selection-change="handleSelectionChange">
@@ -598,6 +621,11 @@ export default {
         { value: 2, label: "暂缓流失" },
         { value: 3, label: "已流失" },
       ],
+      orders_options: [
+        { value: 0, label: "全部" },
+        { value: 1, label: "未回款" },
+        { value: 2, label: "已回款" },
+      ],
       // cust_options: [{
       //   value: 1,
       //   label: '测试经理'
@@ -628,6 +656,9 @@ export default {
       total3: 1000,
       pagesize3: 5, //每页多少数据
       currentPage3: 1, //默认当前页为第一页
+      hasGetOrdersTotal: undefined,
+      notGetOrdersTotal: undefined,
+      showOrdersWithState: 0,
 
       //暂缓流失
       deleteDialogVisible: false,
@@ -655,7 +686,7 @@ export default {
 
       clientInfoQuery: {
         currentPage: 1,
-        size: 10,
+        size: 5,
         clientName: "",
         clientAreaId: [],
         clientLevelId: [],
@@ -682,6 +713,7 @@ export default {
     handleBeforeClose(done) {
       this.isLosing = true;
       this.dialogFormVisible1 = false;
+      this.showOrdersWithState=0;//设置订单查询为全查询
     },
     //this.jump("/404");
     jump(path) {
@@ -689,15 +721,18 @@ export default {
     },
     //清空搜索输入框
     clearCondition() {
-      this.currentPage = 1;
-      this.clientName_select = '';
-      this.clientAreaId_select = undefined;
-      this.clientLevelId_select = undefined;
-      this.clientContentment_select = undefined;
-      this.clientCredit_select = undefined;
-      this.clientCustId_select = undefined;
-      this.clientState_select = undefined;
-      this.userdata();
+      this.clientInfoQuery = {
+        currentPage: 1,
+        size: 5,
+        clientName: "",
+        clientAreaId: [],
+        clientLevelId: [],
+        clientContentment: [],
+        clientCredit: [],
+        clientCustId: [],
+        clientState: [],
+      },
+        this.userdata();
       this.get_area_options();
       this.get_level_options();
       this.get_cust_options();
@@ -764,99 +799,32 @@ export default {
 
     async handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-      if (this.username_select == "" && this.email_select == "") {
-        const result = await this.$http.get(
-          `/clientInfo/list?currentPage=${val}&size=${5}`, {
-        }
-        );
-        if (result.status === 200) {
-          this.tableData = result.data.data;
-          this.total = Number(result.data.total);
-          this.setCountDown();
-          this.$forceUpdate();
-        }
-      } else {
-        var tmp_clientAreaId_select = this.clientAreaId_select;
-        var tmp_clientLevelId_select = this.clientLevelId_select;
-        var tmp_clientContentment_select = this.clientContentment_select;
-        var tmp_clientCredit_select = this.clientCredit_select;
-        var tmp_clientCustId_select = this.clientCustId_select;
-        var tmp_clientState_select = this.clientState_select;
-        if (typeof this.clientAreaId_select === 'undefined' || this.clientAreaId_select === null || this.clientAreaId_select === '') {
-          tmp_clientAreaId_select = 0;
-        }
-        if (typeof this.clientLevelId_select === 'undefined' || this.clientLevelId_select === null || this.clientLevelId_select === '') {
-          tmp_clientLevelId_select = 0;
-        }
-        if (typeof this.clientContentment_select === 'undefined' || this.clientContentment_select === null || this.clientContentment_select === '') {
-          tmp_clientContentment_select = 0;
-        }
-        if (typeof this.clientCredit_select === 'undefined' || this.clientCredit_select === null || this.clientCredit_select === '') {
-          tmp_clientCredit_select = 0;
-        }
-        if (typeof this.clientCustId_select === 'undefined' || this.clientCustId_select === null || this.clientCustId_select === '') {
-          tmp_clientCustId_select = 0;
-        }
-        if (typeof this.clientState_select === 'undefined' || this.clientState_select === null || this.clientState_select === '') {
-          tmp_clientState_select = 0;
-        }
-        this.$http.get(`/clientInfo/conditionSelect?currentPage=${val}&size=${5}&clientName=${this.clientName_select}&clientAreaId=${tmp_clientAreaId_select}&clientLevelId=${tmp_clientLevelId_select}&clientContentment=${tmp_clientContentment_select}&clientCredit=${tmp_clientCredit_select}&clientCustId=${tmp_clientCustId_select}&clientState=${tmp_clientState_select}`, {})
-          .then(response => {
-            // 执行成功时的代码
-            this.tableData = response.data.data;
-            this.setCountDown();
-            this.total = Number(response.data.total);
-            this.$forceUpdate();
-          })
-          .catch(error => {
-            // 请求失败时的代码
-            this.$message.error("查询失败");
-            console.error('请求失败：', error);
-          });
+      try {
+        this.clientInfoQuery.currentPage = val;
+        const response = await axios.post('/clientInfo/conditionSelectByList', this.clientInfoQuery);
+        const data = response.data;
+        console.log("test-data" + data.data)
+        this.tableData = data.data
+        this.setCountDown();
+        this.total = Number(response.data.total);
+        this.$forceUpdate();
+      } catch (error) {
+        console.error("查询客户信息失败:", error);
       }
     },
     //条件查询
     async conditionSelect_click() {
-      this.currentPage = 1;
-      var tmp_clientAreaId_select = this.clientAreaId_select;
-      var tmp_clientLevelId_select = this.clientLevelId_select;
-      var tmp_clientContentment_select = this.clientContentment_select;
-      var tmp_clientCredit_select = this.clientCredit_select;
-      var tmp_clientCustId_select = this.clientCustId_select;
-      var tmp_clientState_select = this.clientState_select;
-      if (typeof this.clientAreaId_select === 'undefined' || this.clientAreaId_select === null || this.clientAreaId_select === '') {
-        tmp_clientAreaId_select = 0;
-      }
-      if (typeof this.clientLevelId_select === 'undefined' || this.clientLevelId_select === null || this.clientLevelId_select === '') {
-        tmp_clientLevelId_select = 0;
-      }
-      if (typeof this.clientContentment_select === 'undefined' || this.clientContentment_select === null || this.clientContentment_select === '') {
-        tmp_clientContentment_select = 0;
-      }
-      if (typeof this.clientCredit_select === 'undefined' || this.clientCredit_select === null || this.clientCredit_select === '') {
-        tmp_clientCredit_select = 0;
-      }
-      if (typeof this.clientCustId_select === 'undefined' || this.clientCustId_select === null || this.clientCustId_select === '') {
-        tmp_clientCustId_select = 0;
-      }
-      if (typeof this.clientState_select === 'undefined' || this.clientState_select === null || this.clientState_select === '') {
-        tmp_clientState_select = 0;
-      }
-      const result = await this.$http.get(
-        `/clientInfo/conditionSelect?currentPage=${1}&size=${5}&clientName=${this.clientName_select}&clientAreaId=${tmp_clientAreaId_select}&clientLevelId=${tmp_clientLevelId_select}&clientContentment=${tmp_clientContentment_select}&clientCredit=${tmp_clientCredit_select}&clientCustId=${tmp_clientCustId_select}&clientState=${tmp_clientState_select}`, {
-        // headers: {
-        //   Authorization: "Bearer " + JSON.parse(localStorage.getItem('userdata')).token
-        // }
-      }
-      );
-      if (result.status === 200) {
-        this.tableData = result.data.data;
-        this.total = Number(result.data.total);
+      this.clientInfoQuery.currentPage = 1;
+      try {
+        const response = await axios.post('/clientInfo/conditionSelectByList', this.clientInfoQuery);
+        const data = response.data;
+        console.log("test-data" + data.data)
+        this.tableData = data.data
         this.setCountDown();
+        this.total = Number(response.data.total);
         this.$forceUpdate();
-        this.$message.success("查询成功");
-      } else {
-        this.$message.error("查询失败");
+      } catch (error) {
+        console.error("查询客户信息失败:", error);
       }
     },
     // 修改用户信息
@@ -1012,8 +980,16 @@ export default {
     //--------------------------------历史订单部分-----------------------------------------------
     //获取第一页表格数据
     async getOrders(clientCode) {
+      this.setSumWithState(clientCode)
+      var tmp_State=0;
+      if(this.showOrdersWithState==undefined||this.showOrdersWithState==0)
+      {
+        tmp_State=0;
+      }else{
+        tmp_State=this.showOrdersWithState;
+      }
       const result = await this.$http.get(
-        `/orders/listBy?currentPage=${1}&size=${5}&ordersState=${0}&clientCode=${clientCode}`, {}
+        `/orders/listBy?currentPage=${1}&size=${5}&ordersState=${tmp_State}&clientCode=${clientCode}`, {}
       );
       console.log(result)
       if (result.status === 200) {
@@ -1027,8 +1003,15 @@ export default {
     },
     async handleCurrentChange3(val) {
       console.log(`当前页: ${val}`);
+      var tmp_State=0;
+      if(this.showOrdersWithState==undefined||this.showOrdersWithState==0)
+      {
+        tmp_State=0;
+      }else{
+        tmp_State=this.showOrdersWithState;
+      }
       const result = await this.$http.get(
-        `/orders/listBy?currentPage=${val}&size=${5}&ordersState=${0}&clientCode=${clientCode}`, {}
+        `/orders/listBy?currentPage=${val}&size=${5}&ordersState=${tmp_State}&clientCode=${clientCode}`, {}
       );
       console.log(result)
       if (result.status === 200) {
@@ -1038,6 +1021,22 @@ export default {
       } else {
         this.$message.error("查询失败");
       }
+    },
+    getOrdersByState(){
+      this.getOrders(this.currentClientCode);
+    },
+    //分状态获取当前客户的订单金额总和
+    async setSumWithState(clientCode) {
+      //未回款
+      const result1 = await this.$http.get(
+        `/orders/getSumWithState?&clientCode=${clientCode}&ordersState=${1}`, {}
+      );
+      this.notGetOrdersTotal = result1.data;
+      //已回款
+      const result2 = await this.$http.get(
+        `/orders/getSumWithState?&clientCode=${clientCode}&ordersState=${2}`, {}
+      );
+      this.hasGetOrdersTotal = result2.data;
     },
     //--------------------------------暂缓流失部分-----------------------------------------------
     //获取第一页表格数据
@@ -1278,7 +1277,7 @@ export default {
         clientName: "客户",
         clientAreaId: [2, 6],
         clientLevelId: [2, 5],
-        clientContentment: [3,5],
+        clientContentment: [3, 5],
         clientCredit: [3, 5],
         clientCustId: [2],
         clientState: [1, 2],
@@ -1287,8 +1286,8 @@ export default {
       try {
         const response = await axios.post('/clientInfo/conditionSelectByList', clientInfoQuery);
         const data = response.data;
-        console.log("test-data"+data.data)
-        this.tableData=data.data
+        console.log("test-data" + data.data)
+        this.tableData = data.data
 
         // 处理查询结果
         // ...
@@ -1409,5 +1408,9 @@ input[type="file"] {
 
 .green-text {
   color: #8dcd93;
+}
+
+h4 span {
+  display: inline-block;
 }
 </style>

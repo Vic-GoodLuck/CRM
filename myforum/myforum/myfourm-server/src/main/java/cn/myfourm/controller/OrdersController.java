@@ -48,6 +48,15 @@ public class OrdersController {
         return ordersService.getOrdersListBy(currentPage,size,ordersState,clientCode);
     }
 
+    @RequestMapping(value = "/getSumWithState",method = RequestMethod.GET)
+    public int getOrdersByClientCode(@RequestParam("clientCode") String clientCode,@RequestParam("ordersState")int ordersState){
+        List<orders> ordersList=ordersService.selectByClientCodeAndState(clientCode,ordersState);
+        int sum=0;
+        for (orders order : ordersList) {
+            sum+=order.getOrdersTotal();
+        }
+        return sum;
+    }
     @RequestMapping(value = "/countdown",method = RequestMethod.GET)
     public int getOrdersByClientCode(@RequestParam("clientCode") String clientCode){
         // 从订单服务中获取客户订单列表

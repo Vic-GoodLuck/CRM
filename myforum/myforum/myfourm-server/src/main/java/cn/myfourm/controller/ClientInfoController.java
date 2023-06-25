@@ -83,7 +83,6 @@ public class ClientInfoController {
         return clientInfoService.conditionSelectByList(query);
     }
 
-
     //修改信息
     @RequestMapping(value = "/infoModify",method = RequestMethod.PUT)
     public RespBean changeClientInfo(@RequestBody clientInfo clientInfo) {

@@ -10,34 +10,34 @@
             <div style="display: flex">
                 <div style="padding: 10px 0;">
                     <el-input class="ml-5" suffix-icon="el-icon-search" placeholder="请输入客户名"
-                        style="width: 160px;margin:5px;" v-model="clientName_select"></el-input>
-                    <el-select v-model="clientAreaId_select" filterable placeholder="请选择客户所在地区"
+                        style="width: 160px;margin:5px;" v-model="clientInfoQuery.clientName"></el-input>
+                    <el-select v-model="clientInfoQuery.clientAreaId" multiple filterable placeholder="请选择客户所在地区"
                         style="width: 150px;margin:5px;">
                         <el-option v-for="item in area_options" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
 
-                    <el-select v-model="clientLevelId_select" filterable placeholder="请选择客户等级"
+                    <el-select v-model="clientInfoQuery.clientLevelId" multiple filterable placeholder="请选择客户等级"
                         style="width: 150px;margin:5px;">
                         <el-option v-for="item in level_options" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
 
 
-                    <el-select v-model="clientContentment_select" filterable placeholder="请选择客户满意度"
+                    <el-select v-model="clientInfoQuery.clientContentment" multiple filterable placeholder="请选择客户满意度"
                         style="width: 160px;margin:5px;">
                         <el-option v-for="item in Contentment_options" :key="item.value" :label="item.label"
                             :value="item.value">
                         </el-option>
                     </el-select>
 
-                    <el-select v-model="clientCredit_select" filterable placeholder="请选择客户信用度"
+                    <el-select v-model="clientInfoQuery.clientCredit" multiple filterable placeholder="请选择客户信用度"
                         style="width: 160px;margin:5px;">
                         <el-option v-for="item in credit_options" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
 
-                    <el-select v-model="clientCustId_select" filterable placeholder="请选择负责经理"
+                    <el-select v-model="clientInfoQuery.clientCustId" multiple filterable placeholder="请选择负责经理"
                         style="width: 150px;margin:5px;">
                         <el-option v-for="item in cust_options" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
@@ -94,7 +94,7 @@
             </div>
 
             <el-dialog title="暂缓流失" :visible.sync="dialogFormVisible1" width="50%" height="90%" append-to-body center
-            :before-close="handleBeforeClose">
+                :before-close="handleBeforeClose">
                 <reprieve-lose :currentClientCode.sync="currentClientCode"
                     :dialogFormVisible1.sync="dialogFormVisible1"></reprieve-lose>
             </el-dialog>
@@ -184,6 +184,17 @@ export default {
             lostReasonShow: "",
             currentClientLostTime: "",
             tableData4: [],
+            clientInfoQuery: {
+                currentPage: 1,
+                size: 5,
+                clientName: "",
+                clientAreaId: [],
+                clientLevelId: [],
+                clientContentment: [],
+                clientCredit: [],
+                clientCustId: [],
+                clientState: [2],
+            },
         };
     },
 
@@ -204,14 +215,18 @@ export default {
         },
         //清空搜索输入框
         clearCondition() {
-            this.currentPage = 1;
-            this.clientName_select = '';
-            this.clientAreaId_select = undefined;
-            this.clientLevelId_select = undefined;
-            this.clientContentment_select = undefined;
-            this.clientCredit_select = undefined;
-            this.clientCustId_select = undefined;
-            this.userdata();
+            this.clientInfoQuery = {
+                currentPage: 1,
+                size: 5,
+                clientName: "",
+                clientAreaId: [],
+                clientLevelId: [],
+                clientContentment: [],
+                clientCredit: [],
+                clientCustId: [],
+                clientState: [2],
+            },
+                this.userdata();
             this.get_area_options();
             this.get_level_options();
             this.get_cust_options();
@@ -238,89 +253,30 @@ export default {
         },
         async handleCurrentChange(val) {
             console.log(`当前页: ${val}`);
-            if (this.username_select == "" && this.email_select == "") {
-                const result = await this.$http.get(
-                    `/clientInfo/conditionSelect?currentPage=${1}&size=${5}&clientName=${''}&clientAreaId=${0}&clientLevelId=${0}&clientContentment=${0}&clientCredit=${0}&clientCustId=${0}&clientState=${2}`, {
-                }
-                );
-                if (result.status === 200) {
-                    this.tableData = result.data.data;
-                    this.total = Number(result.data.total);
-                    this.$forceUpdate();
-                }
-            } else {
-                var tmp_clientAreaId_select = this.clientAreaId_select;
-                var tmp_clientLevelId_select = this.clientLevelId_select;
-                var tmp_clientContentment_select = this.clientContentment_select;
-                var tmp_clientCredit_select = this.clientCredit_select;
-                var tmp_clientCustId_select = this.clientCustId_select;
-                if (typeof this.clientAreaId_select === 'undefined' || this.clientAreaId_select === null || this.clientAreaId_select === '') {
-                    tmp_clientAreaId_select = 0;
-                }
-                if (typeof this.clientLevelId_select === 'undefined' || this.clientLevelId_select === null || this.clientLevelId_select === '') {
-                    tmp_clientLevelId_select = 0;
-                }
-                if (typeof this.clientContentment_select === 'undefined' || this.clientContentment_select === null || this.clientContentment_select === '') {
-                    tmp_clientContentment_select = 0;
-                }
-                if (typeof this.clientCredit_select === 'undefined' || this.clientCredit_select === null || this.clientCredit_select === '') {
-                    tmp_clientCredit_select = 0;
-                }
-                if (typeof this.clientCustId_select === 'undefined' || this.clientCustId_select === null || this.clientCustId_select === '') {
-                    tmp_clientCustId_select = 0;
-                }
-                this.$http.get(`/clientInfo/conditionSelect?currentPage=${val}&size=${5}&clientName=${this.clientName_select}&clientAreaId=${tmp_clientAreaId_select}&clientLevelId=${tmp_clientLevelId_select}&clientContentment=${tmp_clientContentment_select}&clientCredit=${tmp_clientCredit_select}&clientCustId=${tmp_clientCustId_select}&clientState=${2}`, {})
-                    .then(response => {
-                        // 执行成功时的代码
-                        this.tableData = response.data.data;
-                        this.total = Number(response.data.total);
-                        this.$forceUpdate();
-                    })
-                    .catch(error => {
-                        // 请求失败时的代码
-                        this.$message.error("查询失败");
-                        console.error('请求失败：', error);
-                    });
+            try {
+                this.clientInfoQuery.currentPage = val;
+                this.clientInfoQuery.clientState=[2];
+                const response = await axios.post('/clientInfo/conditionSelectByList', this.clientInfoQuery);
+                const data = response.data;
+                this.tableData = data.data
+                this.total = Number(response.data.total);
+                this.$forceUpdate();
+            } catch (error) {
+                console.error("查询客户信息失败:", error);
             }
         },
         //条件查询
         async conditionSelect_click() {
-            this.currentPage = 1;
-            var tmp_clientAreaId_select = this.clientAreaId_select;
-            var tmp_clientLevelId_select = this.clientLevelId_select;
-            var tmp_clientContentment_select = this.clientContentment_select;
-            var tmp_clientCredit_select = this.clientCredit_select;
-            var tmp_clientCustId_select = this.clientCustId_select;
-            if (typeof this.clientAreaId_select === 'undefined' || this.clientAreaId_select === null || this.clientAreaId_select === '') {
-                tmp_clientAreaId_select = 0;
-            }
-            if (typeof this.clientLevelId_select === 'undefined' || this.clientLevelId_select === null || this.clientLevelId_select === '') {
-                tmp_clientLevelId_select = 0;
-            }
-            if (typeof this.clientContentment_select === 'undefined' || this.clientContentment_select === null || this.clientContentment_select === '') {
-                tmp_clientContentment_select = 0;
-            }
-            if (typeof this.clientCredit_select === 'undefined' || this.clientCredit_select === null || this.clientCredit_select === '') {
-                tmp_clientCredit_select = 0;
-            }
-            if (typeof this.clientCustId_select === 'undefined' || this.clientCustId_select === null || this.clientCustId_select === '') {
-                tmp_clientCustId_select = 0;
-            }
-            const result = await this.$http.get(
-                `/clientInfo/conditionSelect?currentPage=${1}&size=${5}&clientName=${this.clientName_select}&clientAreaId=${tmp_clientAreaId_select}&clientLevelId=${tmp_clientLevelId_select}&clientContentment=${tmp_clientContentment_select}&clientCredit=${tmp_clientCredit_select}&clientCustId=${tmp_clientCustId_select}&clientState=${2}`, {
-                // headers: {
-                //   Authorization: "Bearer " + JSON.parse(localStorage.getItem('userdata')).token
-                // }
-            }
-            );
-            if (result.status === 200) {
-                this.tableData = result.data.data;
-                this.total = Number(result.data.total);
-                this.setCountDown();
+            this.clientInfoQuery.currentPage = 1;
+            this.clientInfoQuery.clientState=[2];
+            try {
+                const response = await axios.post('/clientInfo/conditionSelectByList', this.clientInfoQuery);
+                const data = response.data;
+                this.tableData = data.data
+                this.total = Number(response.data.total);
                 this.$forceUpdate();
-                this.$message.success("查询成功");
-            } else {
-                this.$message.error("查询失败");
+            } catch (error) {
+                console.error("查询客户信息失败:", error);
             }
         },
 

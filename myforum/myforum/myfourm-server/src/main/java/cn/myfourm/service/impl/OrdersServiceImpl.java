@@ -40,4 +40,13 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, orders> impleme
         return ordersMapper.selectByClientCode(clientCode);
     }
 
+    @Override
+    public List<orders> selectByClientCodeAndState(String clientCode_,int ordersState_){
+        QueryWrapper<orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("ordersState", ordersState_);
+        queryWrapper.eq("clientCode", clientCode_);
+        List<orders> ordersList = ordersMapper.selectList(queryWrapper);
+        return ordersList;
+    }
+
 }
