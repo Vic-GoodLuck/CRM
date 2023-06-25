@@ -37,6 +37,16 @@ public class dataClientLevelController {
     private dataClientLevelService dataclientlevelService;
 
 
+
+    @RequestMapping(value = "/getLevel",method = RequestMethod.GET)
+    public RespBean getArea(){
+        List<dataClientLevel> areas = dataclientlevelService.getLevel();
+        if(areas!=null){
+            return RespBean.success("查询成功",areas);
+        }
+        return RespBean.error("查询失败");
+    }
+
     //    分页查询用户列表
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public RespPageBean getLevelList(@RequestParam(value = "currentPage",defaultValue = "1")int currentPage, @RequestParam(value = "size",defaultValue = "10")int size){

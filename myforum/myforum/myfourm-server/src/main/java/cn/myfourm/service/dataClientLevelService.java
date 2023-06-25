@@ -10,5 +10,6 @@ import java.util.Map;
 
 
 public interface dataClientLevelService extends IService<dataClientLevel> {
+    List<dataClientLevel> getLevel();
     RespPageBean getLevelList(int currentPage, int size);
 }

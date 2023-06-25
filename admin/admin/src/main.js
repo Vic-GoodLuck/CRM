@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import "@/assets/elementStyle/style.css"
 // 引入路由相关组件
 import router from './router'
 // 引入仓库进行注册

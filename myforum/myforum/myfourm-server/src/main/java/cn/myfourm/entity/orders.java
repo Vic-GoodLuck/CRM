@@ -24,7 +24,7 @@ public class orders implements Serializable {
     private Integer ordersId;//订单编号
 
     @NotNull(message = "订购日期不能为空")
-    private String ordersDate;//订购日期
+    private Date ordersDate;//订购日期
 
     @NotNull(message = "订单状态不能为空")
     private Integer ordersState;//订单状态

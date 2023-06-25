@@ -33,4 +33,31 @@
         select * from clientinfo
     </select>
 
+    <select id="conditionSelect" resultMap="BaseResultMap">
+        SELECT * FROM clientinfo
+        WHERE 1=1
+        <if test="clientName != null and clientName != ''">
+            AND clientName = #{clientName}
+        </if>
+        <if test="clientAreaId != null and clientAreaId != 0">
+            AND clientAreaId = #{clientAreaId}
+        </if>
+        <if test="clientLevelId != null and clientLevelId != 0">
+            AND clientLevelId = #{clientLevelId}
+        </if>
+        <if test="clientContentment != null and clientContentment != 0">
+            AND clientContentment = #{clientContentment}
+        </if>
+        <if test="clientCredit != null and clientCredit != 0">
+            AND clientCredit = #{clientCredit}
+        </if>
+        <if test="clientCustId != null and clientCustId != 0">
+            AND clientCustId = #{clientCustId}
+        </if>
+        <if test="clientState != null and clientState != 0">
+            AND clientState = #{clientState}
+        </if>
+    </select>
+
+
 </mapper>

@@ -27,7 +27,7 @@ public class clientReprieveLose implements Serializable {
     private String reprieveStep;//暂缓措施项
 
     @NotNull(message = "客户编号不能为空")
-    private Integer clientCode;//客户编号
+    private String clientCode;//客户编号
 
 
     @TableField(exist = false)

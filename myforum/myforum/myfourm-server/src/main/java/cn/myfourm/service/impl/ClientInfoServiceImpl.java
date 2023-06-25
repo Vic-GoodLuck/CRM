@@ -2,6 +2,7 @@ package cn.myfourm.service.impl;
 
 import cn.myfourm.entity.RespPageBean;
 import cn.myfourm.entity.clientInfo;
+import cn.myfourm.entity.sysUser;
 import cn.myfourm.mapper.ClientInfoMapper;
 import cn.myfourm.service.ClientInfoService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -30,4 +31,13 @@ public class ClientInfoServiceImpl extends ServiceImpl<ClientInfoMapper, clientI
 //        });
         return new RespPageBean(userIPage.getTotal(), userIPage.getRecords());
     }
+
+//条件查询
+    @Override
+   public RespPageBean conditionSelect(int currentPage, int size,String clientName_select,int clientAreaId_select,int clientLevelId_select,int clientContentment_select,int clientCredit_select,int clientCustId_select,int clientState_select){
+        Page<clientInfo> userPage = new Page<>(currentPage,size);
+        IPage<clientInfo> userIPage = clientInfoMapper.conditionSelect(userPage,clientName_select,clientAreaId_select,clientLevelId_select,clientContentment_select,clientCredit_select,clientCustId_select,clientState_select);
+        return new RespPageBean(userIPage.getTotal(), userIPage.getRecords());
+    }
+
 }

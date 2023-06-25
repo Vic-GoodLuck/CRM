@@ -22,12 +22,21 @@ import java.util.Map;
 @Service
 public class dataClientLevelServiceImpl extends ServiceImpl<dataClientLevelMapper, dataClientLevel> implements dataClientLevelService {
     @Autowired
-    private dataClientLevelMapper dataclientlevelMapper;
+    private dataClientLevelMapper dataclientlevelMapper_;
+
+
+    @Override
+    public List<dataClientLevel> getLevel(){
+        QueryWrapper<dataClientLevel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("delMark", 1);
+        List<dataClientLevel> levels=dataclientlevelMapper_.selectList(queryWrapper);
+        return levels;
+    }
 
     @Override
     public RespPageBean getLevelList(int currentPage, int size) {
         Page<dataClientLevel> userPage = new Page<>(currentPage,size);
-        IPage<dataClientLevel> userIPage = dataclientlevelMapper.getLevelList(userPage);
+        IPage<dataClientLevel> userIPage = dataclientlevelMapper_.getLevelList(userPage);
         return new RespPageBean(userIPage.getTotal(), userIPage.getRecords());
     }
 }

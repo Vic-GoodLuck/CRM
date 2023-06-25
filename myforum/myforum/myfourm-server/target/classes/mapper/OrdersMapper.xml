@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.myfourm.mapper.OrdersMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.myfourm.entity.orders">
+        <id column="ordersId" property="ordersId" />
+        <result column="ordersDate" property="ordersDate" />
+        <result column="ordersState" property="ordersState"/>
+        <result column="clientCode" property="clientCode"/>
+        <result column="ordersTotal" property="ordersTotal"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <select id="getOrdersList" resultMap="BaseResultMap">
+        select * from orders
+    </select>
+
+    <select id="getOrdersListBy" resultMap="BaseResultMap">
+        select * from orders where 1=1
+        <if test="ordersState != null and ordersState != 0">
+            AND ordersState=#{ordersState}
+        </if>
+        <if test="clientCode != null and clientCode!=''">
+            AND clientCode = #{clientCode}
+        </if>
+    </select>
+
+    <select id="selectByClientCode" resultType="cn.myfourm.entity.orders">
+        SELECT * FROM orders WHERE clientCode = #{clientCode}
+    </select>
+<!--    <select id="getOrderListByCode" resultMap="BaseResultMap">-->
+<!--        select * from orders where clientCode=#{clientCode}-->
+<!--    </select>-->
+
+
+</mapper>
