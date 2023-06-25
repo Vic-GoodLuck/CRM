@@ -7,7 +7,7 @@ import cn.myfourm.mapper.sysUserMapper;
 import cn.myfourm.service.ClientInfoService;
 import cn.myfourm.service.dataAreaService;
 import cn.myfourm.service.dataClientLevelService;
-
+import cn.myfourm.entity.clientInfoQuery;
 import cn.myfourm.service.sysUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -25,6 +26,8 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.validation.Valid;
 
 @Controller
 @ResponseBody
@@ -71,6 +74,13 @@ public class ClientInfoController {
         System.out.println("clientState_select: " + clientState_select);
         System.out.println("---------------------------------------------------------------------------");
         return clientInfoService.conditionSelect(currentPage,size,clientName_select,clientAreaId_select,clientLevelId_select,clientContentment_select,clientCredit_select,clientCustId_select,clientState_select);
+    }
+
+    @RequestMapping(value = "/conditionSelectByList",method = RequestMethod.POST)
+    public RespPageBean conditionSelectByList(@RequestBody clientInfoQuery query) {
+        System.out.println(query.toString());
+        // 执行查询
+        return clientInfoService.conditionSelectByList(query);
     }
 
 

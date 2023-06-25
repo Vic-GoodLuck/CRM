@@ -23,21 +23,27 @@ public class clientInfo implements Serializable {
     @TableId(value = "clientCode")
     private String clientCode;//客户编号（KH + 六位日期数字 + 三位数字流水号）
 
+    @TableField("clientName")
     @NotNull(message = "客户名称不能为空")
     private String clientName;//客户名称
 
+    @TableField("clientAreaId")
     @NotNull(message = "客户所在地区编号不能为空")
     private Integer clientAreaId;//客户所在地区
 
+    @TableField("clientCustId")
     @NotNull(message = "所属客户经理编号不能为空")
     private Integer clientCustId;//所属客户经理编号
 
+    @TableField("clientLevelId")
     @NotNull(message = "客户等级不能为空")
     private Integer clientLevelId;//客户等级
 
+    @TableField("clientContentment")
     @NotNull(message = "客户满意度不能为空")
     private Integer clientContentment;//客户满意度
 
+    @TableField("clientCredit")
     @NotNull(message = "客户信用度不能为空")
     private Integer clientCredit;//客户信用度
 
@@ -73,6 +79,7 @@ public class clientInfo implements Serializable {
     private String clientNativeTax;//地税登记号
     private String clientCountryTax;//国税登记号
 
+    @TableField("clientState")
     @NotNull(message = "客户状态不能为空")
     private Integer clientState;//客户状态
 

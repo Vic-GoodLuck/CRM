@@ -48,7 +48,7 @@
           <el-button class="ml-5" type="primary" @click="conditionSelect_click">搜索</el-button>
           <el-button class="ml-5" type="danger" @click="clearCondition">清空</el-button>
           <!-- TODO: 导出功能尚未实现 -->
-          <el-button class="ml-5" type="success" @click="setCountDown">导出</el-button>
+          <el-button class="ml-5" type="success" @click="test">导出</el-button>
         </div>
       </div>
       <div style="display: flex">
@@ -652,6 +652,18 @@ export default {
       tableData2: [],
       tableData3: [],
       tableData4: [],
+
+      clientInfoQuery: {
+        currentPage: 1,
+        size: 10,
+        clientName: "",
+        clientAreaId: [],
+        clientLevelId: [],
+        clientContentment: [],
+        clientCredit: [],
+        clientCustId: [],
+        clientState: [],
+      },
       testData: "2",
     };
   },
@@ -684,7 +696,7 @@ export default {
       this.clientContentment_select = undefined;
       this.clientCredit_select = undefined;
       this.clientCustId_select = undefined;
-      this.clientState_select=undefined;
+      this.clientState_select = undefined;
       this.userdata();
       this.get_area_options();
       this.get_level_options();
@@ -769,7 +781,7 @@ export default {
         var tmp_clientContentment_select = this.clientContentment_select;
         var tmp_clientCredit_select = this.clientCredit_select;
         var tmp_clientCustId_select = this.clientCustId_select;
-        var tmp_clientState_select=this.clientState_select;
+        var tmp_clientState_select = this.clientState_select;
         if (typeof this.clientAreaId_select === 'undefined' || this.clientAreaId_select === null || this.clientAreaId_select === '') {
           tmp_clientAreaId_select = 0;
         }
@@ -786,7 +798,7 @@ export default {
           tmp_clientCustId_select = 0;
         }
         if (typeof this.clientState_select === 'undefined' || this.clientState_select === null || this.clientState_select === '') {
-          tmp_clientState_select= 0;
+          tmp_clientState_select = 0;
         }
         this.$http.get(`/clientInfo/conditionSelect?currentPage=${val}&size=${5}&clientName=${this.clientName_select}&clientAreaId=${tmp_clientAreaId_select}&clientLevelId=${tmp_clientLevelId_select}&clientContentment=${tmp_clientContentment_select}&clientCredit=${tmp_clientCredit_select}&clientCustId=${tmp_clientCustId_select}&clientState=${tmp_clientState_select}`, {})
           .then(response => {
@@ -811,7 +823,7 @@ export default {
       var tmp_clientContentment_select = this.clientContentment_select;
       var tmp_clientCredit_select = this.clientCredit_select;
       var tmp_clientCustId_select = this.clientCustId_select;
-      var tmp_clientState_select=this.clientState_select;
+      var tmp_clientState_select = this.clientState_select;
       if (typeof this.clientAreaId_select === 'undefined' || this.clientAreaId_select === null || this.clientAreaId_select === '') {
         tmp_clientAreaId_select = 0;
       }
@@ -828,7 +840,7 @@ export default {
         tmp_clientCustId_select = 0;
       }
       if (typeof this.clientState_select === 'undefined' || this.clientState_select === null || this.clientState_select === '') {
-          tmp_clientState_select= 0;
+        tmp_clientState_select = 0;
       }
       const result = await this.$http.get(
         `/clientInfo/conditionSelect?currentPage=${1}&size=${5}&clientName=${this.clientName_select}&clientAreaId=${tmp_clientAreaId_select}&clientLevelId=${tmp_clientLevelId_select}&clientContentment=${tmp_clientContentment_select}&clientCredit=${tmp_clientCredit_select}&clientCustId=${tmp_clientCustId_select}&clientState=${tmp_clientState_select}`, {
@@ -1260,14 +1272,31 @@ export default {
       return isLt2M;
     },
     async test() {
-      const response = await axios.get('/orders/countdown', {
-        params: {
-          clientCode: 'KH202201001'
-        }
-      });
+      const clientInfoQuery = {
+        currentPage: 1,
+        size: 10,
+        clientName: "客户",
+        clientAreaId: [2, 6],
+        clientLevelId: [2, 5],
+        clientContentment: [3,5],
+        clientCredit: [3, 5],
+        clientCustId: [2],
+        clientState: [1, 2],
+      };
 
-      var test = response.data;
-      console.log("test=" + test)
+      try {
+        const response = await axios.post('/clientInfo/conditionSelectByList', clientInfoQuery);
+        const data = response.data;
+        console.log("test-data"+data.data)
+        this.tableData=data.data
+
+        // 处理查询结果
+        // ...
+      } catch (error) {
+        console.error("查询客户信息失败:", error);
+      }
+
+
     },
   },
 };
